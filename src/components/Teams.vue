@@ -6,12 +6,7 @@
       <!-- ........  -->
 
       <p>View and edit teams you are part of</p>
-      <div class="d-flex justify-content-center" v-if="status === 'LOADING'">
-        <!-- <div class="spinner-border" role="status">
-          <span class="sr-only">Loading...</span>
-        </div> -->
-        <h2 class="animate">Loading...</h2>
-      </div>
+      <AppSpinner v-if="status === 'LOADING'" />
       <!-- Teams  -->
       <div class="d-flex row" v-else-if="status === 'LOADED'">
         <div
@@ -79,7 +74,7 @@
           "
           style="width: 20rem"
         >
-          <div class="closebtn ml-auto mx-2 my-2" v-on:click="hideForm">
+          <div class="closebtn ml-auto mx-2 my-4" v-on:click="hideForm">
             <i class="fas fa-times"></i>
           </div>
 
@@ -109,6 +104,13 @@
         </div>
       </div>
     </div>
+    <AppAlert v-if="status === 'ERROR'" :message="error.message">
+      <h4>Error</h4>
+      <hr />
+      <p>
+        {{ error.message }}
+      </p>
+    </AppAlert>
   </div>
 
   <!-- <model section> -->
@@ -124,15 +126,21 @@ export default {
       addForm: false,
       viewMeetings: [],
       users: [],
+      error: null,
       status: "LOADING",
     };
   },
   created() {
-    viewMeetings(this.viewMeetings).then((data) => {
-      this.status = "LOADED";
-      console.log(viewMeetings);
-      this.viewMeetings = data;
-    });
+    viewMeetings(this.viewMeetings)
+      .then((data) => {
+        this.status = "LOADED";
+        console.log(viewMeetings);
+        this.viewMeetings = data;
+      })
+      .catch((error) => {
+        this.status = "ERROR";
+        this.error = error;
+      });
     getUsers().then((data) => {
       this.users = data;
       console.log(this.users);

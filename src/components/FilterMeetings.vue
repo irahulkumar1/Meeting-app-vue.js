@@ -37,16 +37,21 @@
       Meetings matching search criteria
     </h2>
     <!-- ...attedees_box....  -->
-    <div class="d-flex justify-content-center" v-if="status === 'LOADING'">
-      <h2 class="animate">Loading...</h2>
-    </div>
+    <AppSpinner v-if="status === 'LOADING'" />
     <hr />
     <div class="attedees_box" v-for="meeting in meetings" :key="meeting.index">
       <div>
         <h3 style="font-size: 24px">
-          {{ meeting.date }}
-          <span style="font-size: 16px"
-            >{{ meeting.startTime.hours }}:{{ meeting.startTime.minutes }}</span
+          {{ meeting.date | date }}
+          <span style="font-size: 16px">
+            {{ meeting.startTime.hours }}:{{
+              meeting.startTime.minutes
+            }}
+            am</span
+          >
+          -
+          <span style="font-size: 16px">
+            {{ meeting.endTime.hours }}:{{ meeting.endTime.minutes }}am</span
           >
         </h3>
         <p>{{ meeting.name }}</p>
@@ -67,9 +72,13 @@
         </button>
       </div>
     </div>
-    <div class="alert alert-danger" role="alert" v-if="status === 'ERROR'">
-      {{ error.message }}
-    </div>
+    <AppAlert v-if="status === 'ERROR'" :message="error.message">
+      <h4>Error</h4>
+      <hr />
+      <p>
+        {{ error.message }}
+      </p>
+    </AppAlert>
   </div>
 </template>
 

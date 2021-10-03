@@ -13,4 +13,4 @@ const viewMeetings = async () => {
 
 export {
     viewMeetings
- };
+};
