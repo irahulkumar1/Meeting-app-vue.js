@@ -4,15 +4,15 @@
       <h1>Calendar</h1>
     </header>
     <hr />
-    <!-- ........  -->
+    <!-- ...........-->
 
     <div class="cal_heading">
-      <h3>12 septemper 2021</h3>
+      <h3> {{ moment(new Date(this.selectedDate)).format('DD MMMM YYYY')}}</h3>
       <div class="calender_selector">
-        <input type="date" id="meeting" value="" name="meeting" />
+        <input type="date" id="meeting" value="" name="meeting" v-model="selectedDate" v-on:input="desiredDate(selectedDate)" />
       </div>
     </div>
-    <h3>Saturday</h3>
+    <h3>{{day}}</h3>
     <!-- Meeting content  -->
     <div class="calendar">
       <!-- Markup for 24 hours in the calendar and meetings (start with one meeting, say 7:30 - 8:30) -->
@@ -28,13 +28,11 @@
           data-start-time="7:30"
           data-end-time="8:30"
           v-for="meeting in meetings"
-          :key="meeting.id"
-        >
+          :key="meeting.id">
+
           <p>{{ meeting.name }}</p>
           <hr class="bar" />
-          <p>
-            Attendees :
-            <span v-for="attendee in meeting.attendees" :key="attendee.id"
+          <p> Attendees :<span v-for="attendee in meeting.attendees" :key="attendee.id"
               >{{ attendee.email }}
             </span>
           </p>
@@ -57,31 +55,58 @@
 
 <script>
 import { getCalendar } from "@/services/calendar";
+  import moment from 'moment';
+// import moment from "moment";
 
 export default {
   name: "Calendar",
   data() {
     return {
+      selectedDate:moment(new Date()).format('YYYY-MM-DD'),
       status: "LOADING",
       meetings: [],
       error: null,
+      day:moment().format('dddd')
     };
   },
-  methods: {},
+  // createdDate() {
+  //   setInterval(this.getNow, 1000);
+  // },
+
+  created(){
+    getCalendar(this.selectedDate)
+    .then(data=>{
+      this.meetings = data;
+    })
+  },
+
 
   //implimenting life cycle method
-  async created() {
-    try {
-      const data = await getCalendar();
-      console.log(data);
-      this.status = "LOADED";
+  // async created() {
+  //   try {
+  //     const data = await getCalendar();
+  //     console.log(data);
+  //     this.status = "LOADED";
+  //     this.meetings = data;
+  //     console.log("calendar page", this.meetings);
+  //   } catch (error) {
+  //     this.status = "ERROR";
+  //     this.error = error;
+  //   }
+  // },
+  
+  methods:{
+    desiredDate (date){
+      this.day=moment(date).format('dddd')
+      console.log(date)
+      getCalendar(date)
+      .then(data=>{
       this.meetings = data;
-      console.log("calendar page", this.meetings);
-    } catch (error) {
-      this.status = "ERROR";
-      this.error = error;
+      console.log(this.meetings)
+    })
+   
     }
-  },
+  }
 };
 </script>
 

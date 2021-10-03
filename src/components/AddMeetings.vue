@@ -92,7 +92,24 @@
 </template>
 
 <script>
-export default {};
+import {postMeetings} from '@/services/meetings.js';
+export default {
+  data(){
+    return{
+      addMeetings:[],
+    }
+  },
+  created(){
+    postMeetings()
+    .then(data=>{
+      this.addMeetings = data;
+      console.log(this.addMeetings)
+    }) .catch(error => {
+                    this.error = error;
+                    this.status = 'ERROR';
+                });
+    }
+};
 </script>
 <style scoped>
 .mtng_btn {

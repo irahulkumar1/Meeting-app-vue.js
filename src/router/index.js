@@ -23,7 +23,7 @@ const router = new Router({
             children: [
                 {
                     name: "FilterMeetings",
-                    path: '/',
+                    path: '/meetings/filtermeetings',
                     component: FilterMeetings
                 },
                 {

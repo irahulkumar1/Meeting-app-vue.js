@@ -1,8 +1,8 @@
 import axios from 'axios';
 import AppConfig from '@/config.js';
 
-const getCalendar = async (date) => {
-    const response = await axios.get(`https://mymeetingsapp.herokuapp.com/api/calendar?date=${date}`, {
+const viewMeetings = async () => {
+    const response = await axios.get(`https://mymeetingsapp.herokuapp.com/api/meetings?period=all&search=vue`, {
         headers: {
             ContentType: "application/json",
             Authorization: AppConfig.apiToken
@@ -10,7 +10,7 @@ const getCalendar = async (date) => {
     })
     return response.data
 }
-// patch
+
 export {
-    getCalendar
-};
+    viewMeetings
+ };

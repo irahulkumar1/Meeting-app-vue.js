@@ -16,13 +16,18 @@ export default {
 .footercomp {
   /* bottom: 0; */
   width: 100%;
-  height: auto;
+  min-height: auto;
   background-color: #f08fa9;
   display: flex;
   justify-content: center;
+  /* margin-bottom: 0; */
+  /* position: relative;
+  bottom: 0; */
 }
 
 footer {
   margin-top: 8px;
+
+
 }
 </style>
