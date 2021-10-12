@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="isAuthenticated">
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
         <h4 class="cal-heading">My Meetings</h4>
@@ -19,7 +19,7 @@
             <li class="nav-item">
               <router-link
                 class="nav-link"
-                to="/calender"
+                to="/calendar"
                 active-class="active"
                 exact
                 >Calendar</router-link
@@ -55,8 +55,8 @@
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/" active-class="active" exact>
-                <i class="fas fa-sign-out-alt"></i> &nbsp; Logout</router-link
+              <span class="nav-link" active-class="active" @click="logOut">
+                <i class="fas fa-sign-out-alt"></i> &nbsp; Logout</span
               >
             </li>
           </ul>
@@ -69,6 +69,22 @@
 <script>
 export default {
   name: "NavBar",
+  computed: {
+    isAuthenticated() {
+      return this.$store.getters.isAuthenticated;
+    },
+    email() {
+      return this.$store.state.auth.email;
+    },
+  },
+
+  methods: {
+    logOut() {
+      this.$store
+        .dispatch("logout")
+        .then(() => this.$router.push({ name: "Login" }));
+    },
+  },
 };
 </script>
 

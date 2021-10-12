@@ -56,14 +56,11 @@
           <h3 style="font-size: 24px">
             {{ meeting.date | date }}
             <span style="font-size: 16px">
-              {{ meeting.startTime.hours }}:{{
-                meeting.startTime.minutes
-              }}
-              am</span
-            >
+              {{ meeting.startTime.hours }}:{{ meeting.startTime.minutes }}
+            </span>
             -
             <span style="font-size: 16px">
-              {{ meeting.endTime.hours }}:{{ meeting.endTime.minutes }}am</span
+              {{ meeting.endTime.hours }}:{{ meeting.endTime.minutes }}</span
             >
           </h3>
           <p>{{ meeting.name }}</p>
@@ -104,9 +101,7 @@
 <script>
 import { getmeetings, excuseMeeting } from "@/services/meetings.js";
 import { getUsers } from "@/services/meetings.js";
-import axios from "axios";
-import AppConfig from "@/config";
-axios.defaults.headers.common["Authorization"] = AppConfig.apiToken;
+
 export default {
   data() {
     return {
@@ -201,7 +196,7 @@ textarea {
   /* color: white; */
 }
 .attedees_box {
-  width: auto;
+  width: 100%;
   height: auto;
   margin: 20px 0px;
   padding: 15px 20px;
@@ -214,6 +209,8 @@ textarea {
 }
 
 .attedees_box_dropdown {
+  display: inline-block;
+  width: 60%;
   padding: 7px 12px;
   border-radius: 5px;
 }

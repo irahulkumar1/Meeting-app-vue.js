@@ -1,11 +1,11 @@
 import axios from 'axios';
-import AppConfig from '@/config.js';
+// import AppConfig from '@/config.js';
 
 function getTeams() {
     return axios.get(`https://mymeetingsapp.herokuapp.com/api/teams`, {
         headers: {
             ContentType: "application/json",
-            Authorization: AppConfig.apiToken
+            Authorization: localStorage.getItem('token')
         }
     })
         .then(res => {
@@ -15,10 +15,10 @@ function getTeams() {
 }
 
 const excuseTeams = async (id) => {
-    const response = await axios.patch(`https://mymeetingsapp.herokuapp.com/api/teams/${id}?action=remove_member`, {
+    const response = await axios.patch(`https://mymeetingsapp.herokuapp.com/api/teams/${id}?action=remove_member`, null, {
         headers: {
             ContentType: "application/json",
-            Authorization: AppConfig.apiToken
+            Authorization: localStorage.getItem('token')
         }
     })
     return response
@@ -30,7 +30,7 @@ function addTeams(form) {
         headers: {
             'Content-Type': 'application/json',
             // Authorization: AppConfig.apiToken
-            Authorization: AppConfig.apiToken
+            Authorization: localStorage.getItem('token')
         },
         data: form
     }

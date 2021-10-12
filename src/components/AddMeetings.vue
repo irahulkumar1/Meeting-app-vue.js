@@ -101,7 +101,7 @@ export default {
       console.log(this.form);
       addMeetings(this.form).then((data) => {
         this.$toaster.success("Meeting added");
-        console.log("axios call ke baad", data);
+        console.log("after axios", data);
         this.form.attendees = [];
       });
     },

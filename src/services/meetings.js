@@ -1,11 +1,10 @@
 import axios from 'axios';
-import AppConfig from '@/config.js';
+// import AppConfig from '@/config.js';
 
 const getmeetings = async (searchDescription, period) => {
     const response = await axios.get(`https://mymeetingsapp.herokuapp.com/api/meetings?period=${period}&search=${searchDescription}`, {
         headers: {
-            ContentType: "application/json",
-            Authorization: AppConfig.apiToken
+            Authorization: localStorage.getItem('token')
         }
     })
     return response.data
@@ -15,7 +14,7 @@ const getUsers = async () => {
     const response = await axios.get(`https://mymeetingsapp.herokuapp.com/api/users`, {
         headers: {
             ContentType: "application/json",
-            Authorization: AppConfig.apiToken
+            Authorization: localStorage.getItem('token')
         }
     })
     return response.data
@@ -31,7 +30,7 @@ function addMeetings(form) {
         headers: {
             'Content-Type': 'application/json',
             // Authorization: AppConfig.apiToken
-            Authorization: AppConfig.apiToken
+            Authorization: localStorage.getItem('token')
         },
         data: form
     }
@@ -54,10 +53,10 @@ function addMeetings(form) {
 
 // excuse
 const excuseMeeting = async (id) => {
-    const response = await axios.patch(`https://mymeetingsapp.herokuapp.com/api/meetings/${id}?action=remove_attendee`, {
+    const response = await axios.patch(`https://mymeetingsapp.herokuapp.com/api/meetings/${id}?action=remove_attendee`, null, {
         headers: {
             ContentType: "application/json",
-            Authorization: AppConfig.apiToken
+            Authorization: localStorage.getItem('token')
         }
     })
     return response
