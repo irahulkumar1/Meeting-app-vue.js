@@ -4,111 +4,119 @@
       <hr class="customHr" />
 
       <div class="add_meeting">
-        <h2 style="color: white;font-size: 35px;">Add a new meeting</h2>
+        <h2 style="color: white; font-size: 35px">Add a new meeting</h2>
         <hr />
-        <p>
-          Date
-        </p>
-        <input type="date" id="date" name="date" />
-        <p>Start time (hh:mm)</p>
-        <select name="hour" id="">
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-          <option> </option
-        ></select>
 
-        :
-        <select name="min" id="">
-          <option value="0">0</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-          <option value="40">40</option>
-          <option value="50">50</option>
-          <option value="60">60</option>
-
-          <option> </option
-        ></select>
-
-        <p>End time (hh:mm)</p>
-        <select name="hour" id="">
-          <option value="0">0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-          <option> </option
-        ></select>
-
-        :
-        <select name="min" id="">
-          <option value="0">0</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="30">30</option>
-          <option value="40">40</option>
-          <option value="50">50</option>
-          <option value="60">60</option>
-
-          <option> </option
-        ></select>
-
-        <p>Description</p>
-        <textarea name="" id="" cols="40" rows="4"></textarea>
-
-        <p>Emial IDs of attendees, or team's short</p>
+        <p>Meeting Name</p>
         <input
           type="text"
-          placeholder="joh@example.com, @annual-day, mark@example.com"
+          placeholder="Enter Meeting Name"
+          v-model="form.name"
         />
-        <p style="color: white;">
+        <p>Date</p>
+        <input type="date" id="date" name="date" v-model="form.date" />
+
+        <p>Start time (hh:mm)</p>
+        <select name="hour" id="" v-model="form.startTime.hours">
+          <option v-for="hour in 24" :key="hour">{{ hour }}</option>
+        </select>
+        :
+        <select name="min" id="" v-model="form.startTime.minutes">
+          <option v-for="minute in 60" :key="minute">{{ minute }}</option>
+        </select>
+
+        <p>End time (hh:mm)</p>
+        <select name="hour" id="" v-model="form.endTime.hours">
+          <option v-for="hour in 24" :key="hour">{{ hour }}</option>
+        </select>
+        :
+        <select name="min" id="" v-model="form.endTime.minutes">
+          <option v-for="minute in 60" :key="minute">{{ minute }}</option>
+
+          <option></option>
+        </select>
+
+        <p>Description</p>
+        <textarea name="" id="" cols="40" rows="4" v-model="form.description" />
+
+        <p>Emial IDs of attendees, or team's short</p>
+        <select
+          name="emails"
+          id="emails"
+          class="emails"
+          v-model="emailId"
+          @change="emailList(emailId)"
+        >
+          <!-- <option value="---Select Attendees---" selected>---Select Attendees---</option> -->
+          <option v-for="user in registerdUsers" :key="user.id">
+            {{ user.email }}
+          </option>
+        </select>
+
+        <!-- <select name="emails" id="emails" class="emails" placeholder="john@example.com, @annual-day, mark@example.com" 
+        v-for="(attendee,index) in attendees" :key="index" v-model="form.attendees[index].email">
+            <option v-for="user in registerdUsers" :key="user.id">{{user.email}}</option>
+        </select> -->
+        <!-- <div class="emails-overlay">
+          <span
+            class="overlay"
+            v-for="(attendee, index) in form.attendees"
+            :key="index"
+            >{{ form.attendees[index] }} &#32;</span
+          >
+        </div> -->
+        <!-- ///////// -->
+        <p style="color: white">
           Separate emailsIDs / teams short names by commas - team short names
           always begin with @
         </p>
 
-        <button>Add meeting</button>
+        <button @click="submit">Add meeting</button>
       </div>
     </main>
   </div>
 </template>
 
 <script>
-import {postMeetings} from '@/services/meetings.js';
+import { addMeetings, getUsers } from "@/services/meetings.js";
+// import moment from "moment";
 export default {
-  data(){
-    return{
-      addMeetings:[],
-    }
+  data() {
+    return {
+      form: {
+        name: "",
+        description: "",
+        date: "",
+        startTime: { hours: 12, minutes: 20 },
+        endTime: { hours: 13, minutes: 30 },
+        attendees: [],
+      },
+      registerdUsers: [],
+      emailId: "Attendees",
+    };
   },
-  created(){
-    postMeetings()
-    .then(data=>{
-      this.addMeetings = data;
-      console.log(this.addMeetings)
-    }) .catch(error => {
-                    this.error = error;
-                    this.status = 'ERROR';
-                });
-    }
+
+  methods: {
+    submit() {
+      console.log(this.form);
+      addMeetings(this.form).then((data) => {
+        this.$toaster.success("Meeting added");
+        console.log("axios call ke baad", data);
+        this.form.attendees = [];
+      });
+    },
+  },
+  emailList(emailId) {
+    this.emailId = emailId;
+    this.form.attendees.push(this.emailId);
+    console.log(this.emailId);
+  },
+  created() {
+    getUsers().then((data) => {
+      this.registerdUsers = data;
+      // console.log(this.users);
+    });
+  },
 };
 </script>
 <style scoped>
@@ -163,6 +171,21 @@ textarea {
 select {
   padding: 5px;
   border-radius: 5px;
+}
+.emails {
+  width: 95%;
+  border-radius: 5px;
+  padding: 10px;
+}
+.emails-overlay {
+  margin: 20px 0 0 0;
+}
+.overlay {
+  margin: 20px 10px 0 0;
+  padding: 5px;
+  color: black;
+  border-radius: 10px;
+  background: white;
 }
 .add_meeting button {
   margin: 18px 0;

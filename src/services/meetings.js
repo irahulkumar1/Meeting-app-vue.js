@@ -1,8 +1,8 @@
 import axios from 'axios';
 import AppConfig from '@/config.js';
 
-const getmeetings = async () => {
-    const response = await axios.get(`https://mymeetingsapp.herokuapp.com/api/meetings?period=all&search=vue`, {
+const getmeetings = async (searchDescription, period) => {
+    const response = await axios.get(`https://mymeetingsapp.herokuapp.com/api/meetings?period=${period}&search=${searchDescription}`, {
         headers: {
             ContentType: "application/json",
             Authorization: AppConfig.apiToken
@@ -23,26 +23,45 @@ const getUsers = async () => {
 
 // add a meeting 
 
-const postMeetings = async () => {
-    const response = await axios.post(`https://mymeetingsapp.herokuapp.com/api/meetings`, {
+
+function addMeetings(form) {
+    const config = {
+        method: 'POST',
+        url: 'https://mymeetingsapp.herokuapp.com/api/meetings',
         headers: {
-            ContentType: "application/json",
+            'Content-Type': 'application/json',
+            // Authorization: AppConfig.apiToken
             Authorization: AppConfig.apiToken
-        }
+        },
+        data: form
+    }
+    return axios(config).then(res => {
+        console.log(res.data)
+        return res.data;
     })
-    return response.data
+        .catch(error => error)
 }
 
-const addAttendee = async () => {
-    const response = await axios.patch(`https://mymeetingsapp.herokuapp.com/api/meetings/345678901234567890123412?action=add_attendee&userId=rupeshranjan123@gmail.com`, {
+// const addAttendee = async () => {
+//     const response = await axios.patch(`https://mymeetingsapp.herokuapp.com/api/meetings/345678901234567890123412?action=add_attendee&userId=rupeshranjan123@gmail.com`, {
+//         headers: {
+//             ContentType: "application/json",
+//             Authorization: AppConfig.apiToken
+//         }
+//     })
+//     return response.data
+// }
+
+// excuse
+const excuseMeeting = async (id) => {
+    const response = await axios.patch(`https://mymeetingsapp.herokuapp.com/api/meetings/${id}?action=remove_attendee`, {
         headers: {
             ContentType: "application/json",
             Authorization: AppConfig.apiToken
         }
     })
-    return response.data
+    return response
 }
 export {
-
-    getmeetings, getUsers, postMeetings, addAttendee
+    getmeetings, getUsers, addMeetings, excuseMeeting
 };

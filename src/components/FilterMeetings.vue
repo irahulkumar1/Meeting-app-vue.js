@@ -30,90 +30,132 @@
           v-model="searchDescription"
         ></textarea>
         <br />
-        <button type="button" class="btn btn-primary">Search</button>
-      </div>
-    </div>
-    <h2 style="margin: 20px 0; font-size: 29px">
-      Meetings matching search criteria
-    </h2>
-    <!-- ...attedees_box....  -->
-    <AppSpinner v-if="status === 'LOADING'" />
-    <hr />
-    <div class="attedees_box" v-for="meeting in meetings" :key="meeting.index">
-      <div>
-        <h3 style="font-size: 24px">
-          {{ meeting.date | date }}
-          <span style="font-size: 16px">
-            {{ meeting.startTime.hours }}:{{
-              meeting.startTime.minutes
-            }}
-            am</span
-          >
-          -
-          <span style="font-size: 16px">
-            {{ meeting.endTime.hours }}:{{ meeting.endTime.minutes }}am</span
-          >
-        </h3>
-        <p>{{ meeting.name }}</p>
-        <button type="button" class="btn btn-danger btn-lg btn-color">
-          Excuse yourself
-        </button>
-        <hr />
-        <h4 style="font-size: 20px">Attendees:</h4>
-        <p v-for="attendee in meeting.attendees" :key="attendee.index">
-          {{ attendee.email }}
-        </p>
-        <select class="attedees_box_dropdown" name="date" id="date">
-          <option value="Select member">Select member</option>
-          <option v-for="user in users" :key="user.id">{{ user.email }}</option>
-        </select>
-        <button type="button" class="btn btn-primary btn-sm add_btn">
-          Add
+        <button
+          type="button"
+          class="btn btn-primary"
+          v-on:click="searchResult(searchDescription, period)"
+        >
+          Search
         </button>
       </div>
     </div>
-    <AppAlert v-if="status === 'ERROR'" :message="error.message">
-      <h4>Error</h4>
+
+    <div class="attendee-list" v-if="List">
+      <h2 style="margin: 20px 0; font-size: 29px">
+        Meetings matching search criteria
+      </h2>
+      <!-- ...attedees_box....  -->
+      <AppSpinner v-if="status === 'LOADING'" />
       <hr />
-      <p>
-        {{ error.message }}
-      </p>
-    </AppAlert>
+      <div
+        class="attedees_box"
+        v-for="meeting in meetings"
+        :key="meeting.index"
+      >
+        <div>
+          <h3 style="font-size: 24px">
+            {{ meeting.date | date }}
+            <span style="font-size: 16px">
+              {{ meeting.startTime.hours }}:{{
+                meeting.startTime.minutes
+              }}
+              am</span
+            >
+            -
+            <span style="font-size: 16px">
+              {{ meeting.endTime.hours }}:{{ meeting.endTime.minutes }}am</span
+            >
+          </h3>
+          <p>{{ meeting.name }}</p>
+          <input
+            type="button"
+            value="Excuse yourself"
+            class="btn btn-danger btn-lg btn-color"
+            @click="excuseMeeting(meeting._id)"
+          />
+
+          <hr />
+          <h4 style="font-size: 20px">Attendees:</h4>
+          <p v-for="attendee in meeting.attendees" :key="attendee.index">
+            {{ attendee.email }}
+          </p>
+          <select class="attedees_box_dropdown" name="date" id="date">
+            <option value="Select member">Select member</option>
+            <option v-for="user in users" :key="user.id">
+              {{ user.email }}
+            </option>
+          </select>
+          <button type="button" class="btn btn-primary btn-sm add_btn">
+            Add
+          </button>
+        </div>
+      </div>
+      <AppAlert v-if="status === 'ERROR'" :message="error.message">
+        <h4>Error</h4>
+        <hr />
+        <p>
+          {{ error.message }}
+        </p>
+      </AppAlert>
+    </div>
   </div>
 </template>
 
 <script>
-import { getmeetings } from "@/services/meetings.js";
+import { getmeetings, excuseMeeting } from "@/services/meetings.js";
 import { getUsers } from "@/services/meetings.js";
+import axios from "axios";
+import AppConfig from "@/config";
+axios.defaults.headers.common["Authorization"] = AppConfig.apiToken;
 export default {
   data() {
     return {
+      List: false,
       meetings: [],
       users: [],
       status: "LOADING",
       error: null,
-      period: "All",
-      searchDescription: "vue",
+      period: "",
+      searchDescription: "",
     };
   },
   created() {
-    getmeetings()
-      .then((data) => {
-        this.status = "LOADED";
-        this.meetings = data;
-      })
-      .catch((error) => {
-        this.status = "ERROR";
-        this.error = error;
-      });
-
     getUsers().then((data) => {
       this.users = data;
-      console.log(this.users);
+      // console.log(this.users);
     });
   },
   methods: {
-    // pathch
+    searchResult(searchDescription, period) {
+      this.List = true;
+      // console.log(searchDescription);
+      // console.log(period);
+
+      getmeetings(searchDescription, period)
+        .then((data) => {
+          this.status = "LOADED";
+          this.meetings = data;
+        })
+        .catch((error) => {
+          this.status = "ERROR";
+          this.error = error;
+        });
+    },
+    // excuseMeeting(id) {
+    //   console.log(id);
+    //   return axios
+    //     .patch(
+    //       `https://mymeetingsapp.herokuapp.com/api/meetings/${id}?action=remove_attendee`
+    //     )
+    //     .then((res) => {
+    //       console.log(res.data);
+    //       return res.data;
+    //     });
+    // },
+
+    excuseMeeting(_id) {
+      excuseMeeting(_id).then((response) => console.log(response));
+    },
   },
 };
 </script>
@@ -170,9 +212,7 @@ textarea {
   font-size: 20px;
   margin: 14px 0px;
 }
-.btn-color {
-  /* background-color: #fd6f96; */
-}
+
 .attedees_box_dropdown {
   padding: 7px 12px;
   border-radius: 5px;

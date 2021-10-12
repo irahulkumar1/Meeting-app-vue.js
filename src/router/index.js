@@ -4,6 +4,8 @@ import Calendar from '@/components/Calendar';
 import Meetings from '@/components/Meetings';
 import Teams from '@/components/Teams.vue';
 import AddMeetings from '@/components/AddMeetings.vue';
+import Login from '@/components/Login.vue';
+import Register from '@/components/Register.vue';
 // import SearchMeetings from '@/components/SearchMeetings.vue';
 import FilterMeetings from '@/components/FilterMeetings.vue';
 
@@ -12,8 +14,18 @@ const router = new Router({
     mode: 'history',
     routes: [
         {
-            name: "Calendar",
+            name: "Login",
             path: '/',
+            component: Login
+        },
+        {
+            name: "Register",
+            path: '/register',
+            component: Register
+        },
+        {
+            name: "Calendar",
+            path: '/calendar',
             component: Calendar
         },
         {
@@ -28,7 +40,7 @@ const router = new Router({
                 },
                 {
                     name: "AddMeetings",
-                    path: '/addmeetings',
+                    path: '/meetings/addmeetings',
                     component: AddMeetings,
                 },
             ]

@@ -12,21 +12,30 @@
         <div
           class="card mr-auto d-flex justify-content-around my-3"
           style="width: 20rem"
-          v-for="viewMeeting in viewMeetings"
-          :key="viewMeeting"
+          v-for="team in teams"
+          :key="team.id"
         >
           <div row sm-4>
             <div class="card-body">
-              <h5 class="card-title">{{ viewMeeting.name }}</h5>
-              <p class="card-text">{{ viewMeeting.description }}</p>
+              <h5 class="card-title">{{ team.name }}</h5>
+              <p class="card-text">@{{ team.shortName }}</p>
               <p class="card-text">
-                Teams to come up with strategies to win over customers by end of
-                FY21
+                {{ team.description }}
               </p>
-              <a href="#" class="btn btn-danger">Excuse yourself</a>
+              <input
+                type="button"
+                value="Excuse yourself"
+                class="btn btn-danger btn-lg btn-color"
+                @click="excuseTeams(team._id)"
+              />
               <hr />
-              <p class="card-text" v-for="user in 3" :key="user.id">
-                Members: {{ user.email }}
+              <b>Members:</b>
+              <p
+                class="card-text"
+                v-for="attendee in team.members"
+                :key="attendee.id"
+              >
+                {{ attendee.email }}
               </p>
               <select id="inputUser" class="form-control">
                 <option value="Select member">Select a member</option>
@@ -74,12 +83,13 @@
           "
           style="width: 20rem"
         >
-          <div class="closebtn ml-auto mx-2 my-4" v-on:click="hideForm">
+          <div class="closebtn ml-auto mx-2" v-on:click="hideForm">
             <i class="fas fa-times"></i>
           </div>
 
           <div class="card-body">
             <form>
+              <h4>Add New Team</h4>
               <div class="form-group">
                 <label for="name">Full Name</label>
                 <input
@@ -87,18 +97,44 @@
                   class="form-control"
                   id="name"
                   placeholder="Enter full Name"
+                  v-model="form.name"
                 />
               </div>
               <div class="form-group">
-                <label for="InputEmail1">Email address</label>
+                <label for="InputEmail1">Team Id</label>
                 <input
-                  type="email"
+                  type="text"
                   class="form-control"
                   id="InputEmail1"
-                  placeholder="Enter email"
+                  placeholder="Team Id"
+                  v-model="form.shortName"
                 />
               </div>
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <textarea
+                  type="text"
+                  class="form-control"
+                  placeholder="Team Id"
+                  v-model="form.description"
+                />
+              </div>
+              <div class="form-group">
+                <label for="description">Members</label>
+                <select
+                  name="emails"
+                  id="emails"
+                  class="date-selector form-control"
+                  v-model="emailId"
+                  @change="emailList(emailId)"
+                >
+                  <option value="Select member">Select a member</option>
+                  <option v-for="user in users" :key="user.id">
+                    {{ user.email }}
+                  </option>
+                </select>
+              </div>
+              <button @click="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
         </div>
@@ -117,35 +153,65 @@
 </template>
 
 <script>
-import { viewMeetings } from "@/services/teams";
+import { getTeams, excuseTeams, addTeams } from "@/services/teams";
 import { getUsers } from "@/services/meetings.js";
 export default {
   name: "Teams",
   data() {
     return {
       addForm: false,
-      viewMeetings: [],
+      teams: [],
       users: [],
       error: null,
       status: "LOADING",
+      form: {
+        name: "Test 2",
+        shortName: "test 2",
+        description: "hello world 2",
+        members: [],
+      },
     };
   },
   created() {
-    viewMeetings(this.viewMeetings)
+    // console.log("created");
+    getTeams()
       .then((data) => {
         this.status = "LOADED";
-        console.log(viewMeetings);
-        this.viewMeetings = data;
+        this.teams = data;
+        console.log(data);
       })
       .catch((error) => {
         this.status = "ERROR";
         this.error = error;
+      }),
+      getUsers().then((data) => {
+        this.users = data;
+        console.log(this.users);
       });
-    getUsers().then((data) => {
-      this.users = data;
-      console.log(this.users);
-    });
   },
+
+  // created() {
+  //   getTeams()
+  //     .then((data) => {
+  //       this.status = "LOADED";
+  //       console.log(this.data);
+  //       this.teams = data;
+  //     })
+  //     .catch((error) => {
+  //       this.status = "ERROR";
+  //       this.error = error;
+  //     });
+
+  // getTeams().then((data) => {
+  //   console.log("getting data", this.data);
+  //   this.teams = data;
+  // });
+  // viewTeams();
+  // getUsers().then((data) => {
+  //   this.users = data;
+  //   console.log(this.users);
+  // });
+  // },
 
   methods: {
     showForm() {
@@ -153,6 +219,17 @@ export default {
     },
     hideForm() {
       this.addForm = false;
+    },
+    excuseTeams(_id) {
+      excuseTeams(_id).then((response) => console.log(response));
+    },
+    submit() {
+      console.log(this.form);
+      addTeams(this.form).then((data) => {
+        alert("Team added");
+        console.log("axios call ke baad", data);
+        this.form.members = [];
+      });
     },
   },
 };
@@ -179,6 +256,9 @@ export default {
 }
 .popupform {
   background-color: #d7e9f7;
+}
+.bg-popup {
+  position: fixed;
 }
 .closebtn:hover {
   transform: scale(1.5);
@@ -217,10 +297,4 @@ export default {
   animation-direction: alternate;
   text-shadow: 0 0 1px rgb(155, 150, 150);
 }
-/* body,
-html {
-  height: 96vh;
-  background-color: #111;
-  color: white;
-} */
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container">
-        <h4 class="cal-heading ">My Meetings</h4>
+        <h4 class="cal-heading">My Meetings</h4>
         <button
           class="navbar-toggler"
           type="button"
@@ -15,13 +15,17 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="nav navbar-nav mr-auto ">
-            <li class="nav-item ">
-              <router-link class="nav-link" to="/" active-class="active" exact
+          <ul class="nav navbar-nav mr-auto">
+            <li class="nav-item">
+              <router-link
+                class="nav-link"
+                to="/calender"
+                active-class="active"
+                exact
                 >Calendar</router-link
               >
             </li>
-            <li class="nav-item ">
+            <li class="nav-item">
               <router-link
                 class="nav-link"
                 to="/Meetings"
@@ -43,16 +47,16 @@
 
           <!-- .......... -->
 
-          <ul class="nav navbar-nav ">
+          <ul class="nav navbar-nav">
             <li class="nav-item">
               <router-link class="nav-link" to="#">
                 <i class="fas fa-user-alt"></i> &nbsp; Hello!
                 irahulkv@gamil.com</router-link
               >
             </li>
-            <li class="nav-item ">
-              <router-link class="nav-link" to="#" active-class="active" exact>
-                <i class="fas fa-sign-out-alt "></i> &nbsp; Logout</router-link
+            <li class="nav-item">
+              <router-link class="nav-link" to="/" active-class="active" exact>
+                <i class="fas fa-sign-out-alt"></i> &nbsp; Logout</router-link
               >
             </li>
           </ul>
